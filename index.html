@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+  <style>
+    html,
+    body,
+    #container {
+      width: 100%;
+      height: 100%;
+      color: mediumslateblue
+    }
+  </style>
+  <title>圆的绘制和编辑</title>
+  <script
+    src="https://webapi.amap.com/maps?v=1.4.15&key=d13e00dad6e332ba45b423f71e562dd3&plugin=AMap.CircleEditor"></script>
+</head>
+
+<body>
+  <div id="container"></div>
+  <script type="text/javascript">
+    var map = new AMap.Map("container", {
+      center: [114.32612, 30.561393],
+      zoom: 14
+    });
+
+    var list = [
+      { lat: 114.315735, lng: 30.555333 },
+      { lat: 114.335733, lng: 30.57876 },
+      { lat: 114.289385, lng: 30.581124 }
+    ]
+
+    const radius = 1000;
+    const colors = ['darkseagreen', 'blueviolet', 'mediumslateblue'];
+    var markers = [];
+
+    list = list.map(item => {
+      return {
+        lat: item.lat,
+        lng: item.lng,
+        circles: [{ radius: radius, color: colors[0] },
+        { radius: radius + 500, color: colors[1] },
+        { radius: radius + 1000, color: colors[2] }
+        ]
+      }
+    })
+
+    list.forEach(point => {
+      markers.push(new AMap.Marker({
+        position: new AMap.LngLat(point.lat, point.lng),
+        offset: new AMap.Pixel(-18, -18),
+        icon: new AMap.Icon({
+          size: new AMap.Size(36, 36),
+          image: 'store.png',
+          imageSize: new AMap.Size(36, 36),
+        })
+      }))
+      point.circles.forEach((item, index) => {
+        markers.push(new AMap.Circle({
+          center: [point.lat, point.lng],
+          radius: item.radius, //半径
+          borderWeight: 0,
+          strokeWeight: 0,
+          fillOpacity: 0.7 - 0.2 * index,
+          strokeOpacity: 0,
+          fillColor: item.color,
+          zIndex: 50 - index,
+        }))
+      })
+    })
+
+    map.add(new AMap.OverlayGroup(markers));
+
+  </script>
+</body>
+
+</html>
